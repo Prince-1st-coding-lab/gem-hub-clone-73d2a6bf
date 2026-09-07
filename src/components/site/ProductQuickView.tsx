@@ -17,6 +17,12 @@ export type QuickViewItem = {
   slug?: string | null;
 };
 
+const SIZE_OPTIONS = [
+  { label: "BIG", dims: "70 cm × 30 cm" },
+  { label: "MEDIUM", dims: "60 cm × 30 cm" },
+  { label: "SMALL", dims: "50 cm × 30 cm" },
+];
+
 export function ProductQuickView({
   item,
   whatsapp,
@@ -61,16 +67,6 @@ export function ProductQuickView({
     { label: "Size", value: item.size },
     { label: "Type", value: item.material },
     { label: "Best for", value: item.placement },
-    {
-      label: "Availability",
-      value:
-        item.available === null || item.available === undefined
-          ? null
-          : item.available
-            ? "Available by ordering"
-            : "Currently out of stock",
-    },
-
   ].filter((s) => s.value);
 
   const orderMessage = `Hello G Modern Creativity, I would like to order: ${item.name}${
@@ -98,68 +94,67 @@ export function ProductQuickView({
           <X className="h-5 w-5" />
         </button>
 
-        <div className="grid gap-0 md:grid-cols-[1.1fr_1fr]">
-          <div className="bg-muted/40 p-4">
-            <div className="relative overflow-hidden rounded-xl">
-              <button
-                type="button"
-                onClick={() => setZoom(active)}
-                aria-label={`Enlarge ${item.name} photo ${active + 1}`}
-                className="block w-full cursor-zoom-in"
-              >
-                <img
-                  src={item.images[active]}
-                  alt={`${item.name} photo ${active + 1}`}
-                  className="h-72 w-full object-cover sm:h-96"
-                />
-              </button>
-              {count > 1 ? (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Previous photo"
-                    onClick={prev}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 transition-colors hover:bg-background"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Next photo"
-                    onClick={next}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 transition-colors hover:bg-background"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </>
-              ) : null}
-            </div>
+        <div className="p-4 sm:p-6">
+          <div className="relative overflow-hidden rounded-2xl">
+            <button
+              type="button"
+              onClick={() => setZoom(active)}
+              aria-label={`Enlarge ${item.name} photo ${active + 1}`}
+              className="block w-full cursor-zoom-in"
+            >
+              <img
+                src={item.images[active]}
+                alt={`${item.name} photo ${active + 1}`}
+                className="h-64 w-full object-cover sm:h-96"
+              />
+            </button>
             {count > 1 ? (
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                {item.images.map((src, i) => (
-                  <button
-                    key={`${src}-${i}`}
-                    type="button"
-                    onClick={() => setActive(i)}
-                    aria-label={`Show ${item.name} photo ${i + 1}`}
-                    aria-current={i === active}
-                    className={`shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
-                      i === active ? "border-primary" : "border-transparent"
-                    }`}
-                  >
-                    <img
-                      src={src}
-                      alt={`${item.name} thumbnail ${i + 1}`}
-                      loading="lazy"
-                      className="h-14 w-14 object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              <>
+                <button
+                  type="button"
+                  aria-label="Previous photo"
+                  onClick={prev}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 transition-colors hover:bg-background"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next photo"
+                  onClick={next}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 transition-colors hover:bg-background"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
             ) : null}
           </div>
 
-          <div className="p-6">
+          {count > 1 ? (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              {item.images.map((src, i) => (
+                <button
+                  key={`${src}-${i}`}
+                  type="button"
+                  onClick={() => setActive(i)}
+                  aria-label={`Show ${item.name} photo ${i + 1}`}
+                  aria-current={i === active}
+                  className={`shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
+                    i === active ? "border-primary" : "border-transparent"
+                  }`}
+                >
+                  <img
+                    src={src}
+                    alt={`${item.name} thumbnail ${i + 1}`}
+                    loading="lazy"
+                    className="h-14 w-14 object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="mt-6">
             <h2 className="text-2xl">{item.name}</h2>
             {item.price ? (
               <p className="mt-2 font-display text-lg text-leaf">{item.price}</p>
@@ -167,6 +162,20 @@ export function ProductQuickView({
             {item.description ? (
               <p className="mt-3 text-sm text-muted-foreground">{item.description}</p>
             ) : null}
+
+            <div className="mt-5 flex flex-col divide-y divide-border rounded-2xl border border-border sm:flex-row sm:divide-x sm:divide-y-0">
+              {SIZE_OPTIONS.map(({ label, dims }) => (
+                <div
+                  key={label}
+                  className="flex flex-1 items-center justify-center py-4 text-center"
+                >
+                  <p className="text-sm">
+                    <span className="font-medium text-foreground">{label}</span>{" "}
+                    <span className="text-muted-foreground">— {dims}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
 
             {specs.length ? (
               <dl className="mt-5 space-y-2 border-t border-border pt-4 text-sm">
